@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot To-Do List Organizer</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            width: 80%;
+        }
+        .chatbot-container, .todo-list-container {
+            margin: 10px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            flex: 1;
+        }
+        .header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .header h2 {
+            margin: 0;
+        }
+        .status {
+            font-size: 0.9em;
+            color: green; /* Change to dark green for the dot */
+            display: flex;
+            align-items: center;
+        }
+        .status::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: darkgreen; /* Dark green dot */
+            margin-right: 5px; /* Spacing between dot and text */
+        }
+        .chat-window {
+            height: 300px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background-color: #e5ddd5; /* Light background for chat */
+        }
+        .message {
+            max-width: 80%;
+            padding: 10px;
+            border-radius: 20px;
+            position: relative;
+            display: inline-block;
+            clear: both;
+        }
+        .user-message {
+            align-self: flex-end;
+            background-color: #dcf8c6; /* Light green */
+            color: black;
+            border-bottom-right-radius: 0; /* No bottom-right corner */
+        }
+        .bot-message {
+            align-self: flex-start;
+            background-color: #ffffff; /* White */
+            color: black;
+            border-bottom-left-radius: 0; /* No bottom-left corner */
+        }
+        .typing {
+            font-style: italic;
+            color: gray;
+            align-self: flex-start;
+            margin-left: 10px;
+        }
+        input, button {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            cursor: pointer;
+            width: 100%;
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+        }
+        button:hover {
+            background: linear-gradient(90deg, #2575fc, #6a11cb);
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 5px 0;
+            padding: 5px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+        .completed {
+            text-decoration: line-through;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="chatbot-container">
+            <div class="header">
+                <h2>TO-DO GENIE</h2>
+                <span class="status">Online</span>
+            </div>
+            <div class="chat-window" id="chatWindow"></div>
+            <input type="text" id="userInput" placeholder="Type a message..." onkeypress="handleInput(event)">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+        <div class="todo-list-container">
+            <center>
+                <h2>Text Based Organizer To-Do List Task Organizer</h2>
+            </center>
+            <ul id="todoList"></ul>
+        </div>
+    </div>
+    <script>
+        let todoList = JSON.parse(localStorage.getItem('todoList')) || [];
+
+        function handleInput(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        }
+
+        function sendMessage() {
+            const userInput = document.getElementById("userInput").value;
+            if (userInput.trim() === "") return;
+
+            addChatMessage("User", userInput, "user");
+            processUserInput(userInput.toLowerCase());
+            document.getElementById("userInput").value = "";
+        }
+
+        function addChatMessage(sender, message, type) {
+            const chatWindow = document.getElementById("chatWindow");
+            const chatMessage = document.createElement("div");
+            chatMessage.className = `message ${type === "user" ? "user-message" : "bot-message"}`;
+            chatMessage.innerText = `${sender}: ${message}`;
+            chatWindow.appendChild(chatMessage);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        function processUserInput(input) {
+            addChatMessage("Bot", "Bot is typing...", "typing");
+            setTimeout(() => {
+                const chatWindow = document.getElementById("chatWindow");
+                chatWindow.lastChild.remove(); // Remove the typing message
+                handleUserInput(input);
+            }, 2000);
+        }
+
+        function handleUserInput(input) {
+            if (input.includes("add") || input.includes("create")) {
+                const task = input.replace(/add|create|to-do|todo|list/g, "").trim();
+                if (task) {
+                    addTodoItem(task);
+                    addChatMessage("Bot", `Added "${task}" to the to-do list.`, "bot");
+                } else {
+                    addChatMessage("Bot", "Please specify a task to add.", "bot");
+                }
+            } else if (input.includes("remove") || input.includes("delete")) {
+                const task = input.replace(/remove|delete|to-do|todo|list/g, "").trim();
+                if (removeTodoItem(task)) {
+                    addChatMessage("Bot", `Removed "${task}" from the to-do list.`, "bot");
+                } else {
+                    addChatMessage("Bot", `"${task}" not found in the to-do list.`, "bot");
+                }
+            } else if (input.includes("complete")) {
+                const task = input.replace(/complete|finished/g, "").trim();
+                if (markTodoItemComplete(task)) {
+                    addChatMessage("Bot", `Marked "${task}" as complete.`, "bot");
+                } else {
+                    addChatMessage("Bot", `"${task}" not found in the to-do list.`, "bot");
+                }
+            } else if (input.includes("show") || input.includes("list")) {
+                if (todoList.length === 0) {
+                    addChatMessage("Bot", "Your to-do list is empty.", "bot");
+                } else {
+                    addChatMessage("Bot", `Your to-do list: ${todoList.map(task => task.text).join(", ")}.`, "bot");
+                }
+            } else {
+                addChatMessage("Bot", "I didn't understand. Try adding, removing, or listing tasks.", "bot");
+            }
+        }
+
+        function addTodoItem(task) {
+            const todoItem = { text: task, completed: false };
+            todoList.push(todoItem);
+            localStorage.setItem('todoList', JSON.stringify(todoList));
+            displayTodoItems();
+        }
+
+        function removeTodoItem(task) {
+            const index = todoList.findIndex(item => item.text === task);
+            if (index !== -1) {
+                todoList.splice(index, 1);
+                localStorage.setItem('todoList', JSON.stringify(todoList));
+                displayTodoItems();
+                return true;
+            }
+            return false;
+        }
+
+        function markTodoItemComplete(task) {
+            const item = todoList.find(item => item.text === task);
+            if (item) {
+                item.completed = true;
+                localStorage.setItem('todoList', JSON.stringify(todoList));
+                displayTodoItems();
+                return true;
+            }
+            return false;
+        }
+
+        function displayTodoItems() {
+            const todoListElement = document.getElementById("todoList");
+            todoListElement.innerHTML = ''; // Clear existing items
+            todoList.forEach(task => {
+                const listItem = document.createElement("li");
+                listItem.textContent = task.text;
+                if (task.completed) {
+                    listItem.classList.add("completed");
+                }
+                todoListElement.appendChild(listItem);
+            });
+        }
+
+        // Initial display
+        displayTodoItems();
+    </script>
+</body>
+</html>

@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List Home Page</title>
+
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap">
+    <!-- Boxicons -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <style>
+       /* styles.css */
+
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+:root {
+    --all-transition: 0.5s ease;
+    --opacity-transition: 0.3s ease;
+}
+
+.head {
+    position: absolute;
+    left:4%;
+    top:20%;
+    text-align: center;
+    padding: 30px;
+}
+
+
+/* Sidebar Styles */
+.left-sidebar {
+    position: absolute;
+    left:5%;
+    top:50%;
+    background: linear-gradient(145deg,#ffb6c1,#ffa07a);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    transition: opacity var(--opacity-transition),background var(--all-transition);
+}
+
+.auth-options {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    gap: 15px;
+}
+
+.auth-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px;
+    width: 250px;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 50px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+    color: #333;
+    font-weight: 600;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: background var(--opacity-transition);
+}
+
+.auth-btn i {
+    font-size: 20px;
+    color: #4285f4;
+}
+
+.auth-btn.google:hover {
+    background: #e1ecfd;
+}
+
+.auth-btn.email i {
+    color:#db4437;
+}
+
+.auth-btn.email:hover {
+    background: #fce8e6;
+}
+
+.legal-links {
+    font-size: 14px;
+    color: black;
+    text-align: center;
+}
+
+.legal-links a {
+    text-decoration: none;
+    color: black;
+    font-weight: 600;
+}
+
+.legal-links a:hover {
+    text-decoration: underline;
+}
+
+.nav-bari {
+    position: absolute;
+    left:8%;
+    top:70%;
+    text-align: center;
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.nav-bari a {
+    text-decoration: none;
+    color: black;
+}
+
+
+.nav-bari a:hover {
+    text-decoration: underline;
+}
+
+/* Body Styles */
+body {
+    background: lightcoral;
+    min-height: 100vh;
+    position: relative;
+    transition: background var(--all-transition);
+    overflow: hidden;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 800px;
+    height: 800px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    filter: blur(200px);
+    z-index: -1;
+}
+
+/* Header Styles */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 200;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo img {
+    width: 40px;
+    height: 40px;
+}
+
+.logo h1 {
+    font-size: 24px;
+    color: black;
+    margin: 0;
+}
+
+.nav-bar {
+    display: flex;
+    gap: 20px;
+}
+
+.nav-bar a {
+    text-decoration: none;
+    color: black;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.nav-bar a:hover {
+    text-decoration: underline;
+}
+
+/* Carousel Styles */
+.carousel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    position: relative;
+}
+
+.img-box {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    overflow: hidden;
+}
+
+.img-list {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.img-slider {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.img-item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: transform var(--all-transition), opacity var(--all-transition);
+}
+
+.img-item.active {
+    opacity: 1;
+    transform: scale(1);
+    z-index: 1;
+}
+
+.img-item .item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.img-item .item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--all-transition);
+}
+
+/* Info Box Styles */
+.info-box {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 400px;
+    height: 400px;
+}
+
+.info-box .info-item {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 40px 0 0 40px;
+    padding: 0 70px;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transform: translateX(100%);
+    opacity: 0;
+    box-shadow: none;
+    transition: transform var(--all-transition), opacity var(--all-transition), box-shadow var(--all-transition);
+}
+
+.info-box .info-item.active {
+    transform: translateX(0);
+    opacity: 1;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+}
+
+.info-item h2 {
+    font-size: 30px;
+}
+
+.info-item h2:nth-child(2) {
+    margin: 20px 0;
+}
+
+.colors {
+    margin: 10px 0;
+}
+
+.colors span {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 15px;
+    transition: outline var(--opacity-transition);
+}
+
+.colors span.active {
+    outline: 3px solid white;
+}
+
+.colors span:nth-child(1) {
+    background: lightcoral;
+}
+
+.colors span:nth-child(2) {
+    background: skyblue;
+}
+
+.colors span:nth-child(3) {
+    background: burlywood;
+}
+
+.colors span:nth-child(4) {
+    background: lightgreen;
+}
+
+.colors span:nth-child(5) {
+    background: gainsboro;
+}
+
+.info-item p {
+    font-size: 16px;
+    margin: 20px 0 25px;
+}
+
+.info-item .btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 120px;
+    height: 45px;
+    background: white;
+    border-radius: 40px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    color: black;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background var(--opacity-transition);
+}
+
+.info-item .btn:hover {
+    background: #f0f0f0;
+}
+
+/* Navigation Buttons */
+.navigation {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 15%;
+    width: 300px;
+    display: flex;
+    justify-content: space-between;
+    z-index: 100;
+}
+
+.navigation span {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 24px;
+    color: black;
+    transition: background var(--opacity-transition);
+}
+
+.navigation span:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+
+/* Social Media Icons */
+.social-media {
+    position: absolute;
+    bottom: 2%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+}
+
+
+.social-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    gap: 10px; /* Space between icon and text */
+    width: auto;
+    padding: 10px 20px; /* Adjust padding to your preference */
+}
+
+.social-icon i {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    font-size: 20px;
+    color: black;
+    transition: background var(--opacity-transition);
+}
+
+.social-icon i:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.social-icon span {
+    font-size: 16px;
+    color: black;
+    font-weight: 600;
+}
+
+.footer {
+    top: 96%;
+    left: 83%;
+    font-size: 12px;
+    justify-content: center;
+    position: fixed;
+}
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="todo.png">
+            <h1>To-Do List</h1>
+        </div>
+        <nav class="nav-bar">
+            <a href="welcome.html">Home |</a>
+            <a href="signup.html">Sign Up |</a>
+            <a href="signin.html">Sign In |</a>
+            <a href="chatbot.html">Chatbot |</a>
+            <a href="contact.html">Contact Us |</a>
+        </nav>
+    </header>
+    
+    <div class="carousel">
+        <div class="img-box">
+            <div class="img-list">
+                <div class="img-slider">
+                    <div class="img-item active" data-index="0">
+                        <div class="item">
+                            <img src="image1.png" alt="Task Organizing Visual 1" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="img-item" data-index="1">
+                        <div class="item">
+                            <img src="image2.png" alt="Task Organizing Visual 2" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="img-item" data-index="2">
+                        <div class="item">
+                            <img src="image3.png" alt="Task Organizing Visual 3" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="img-item" data-index="3">
+                        <div class="item">
+                            <img src="image4.png" alt="Task Organizing Visual 4" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="img-item" data-index="4">
+                        <div class="item">
+                            <img src="image5.png" alt="Task Organizing Visual 5" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h3 class="head">Organize your work and life</h3>
+        <div class="left-sidebar">
+         <div class="auth-options">
+            <a href="welcome.html" class="auth-btn google" id="google-login">
+                <i class="bx bxl-google"></i>
+                <span>Continue with Google</span>
+            </a>
+            <a href="welcome.html" class="auth-btn email">
+                <i class="bx bxs-envelope"></i>
+                <span>Continue with Email</span>
+            </a>
+         </div>
+         <div class="legal-links">
+            <a href="signup.html">Sign Up</a> |
+            <a href="signin.html">Sign In</a> 
+         </div>
+        </div>
+
+        <nav class="nav-bari">
+            <a href="welcome.html">Terms of Services |</a>
+            <a href="welcome.html">Privacy Polices</a>
+            </nav>
+            <p class="footer">&copy; 2024 To-Do List. All rights reserved</p>
+        <div class="info-box">
+            <div class="info-item active">
+                <center>
+                    <h2>To-Do</h2>
+                    <h2>Add the Task</h2>
+                    <div class="colors">
+                        <span class="active"></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <p>Add the task of updating the website's to your to-do list to stay on track.</p>
+                    <a href="welcome.html" class="btn">Learn More</a>
+                </center>
+            </div>
+            <!-- Repeat similar blocks for other info-items -->
+            <div class="info-item">
+                <center>
+                    <h2>To-Do</h2>
+                    <h2>Display the Task</h2>
+                    <div class="colors">
+                        <span></span>
+                        <span class="active"></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <p>Add the task of displaying the updates on the website's to your to-do list.</p>
+                    <a href="welcome.html" class="btn">Learn More</a>
+                </center>
+            </div>
+            <div class="info-item">
+                <center>
+                    <h2>To-Do</h2>
+                    <h2>Modify the Task</h2>
+                    <div class="colors">
+                        <span></span>
+                        <span></span>
+                        <span class="active"></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <p>Add the task of modifying the updating on the website's to your to-do list.</p>
+                    <a href="welcome.html" class="btn">Learn More</a>
+                </center>
+            </div>
+            <div class="info-item">
+                <center>
+                    <h2>To-Do</h2>
+                    <h2>Done the Task</h2>
+                    <div class="colors">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span class="active"></span>
+                        <span></span>
+                    </div>
+                    <p>Mark the task of updating the website's homepage as done on your to-do list.</p>
+                    <a href="welcome.html" class="btn">Learn More</a>
+                </center>
+            </div>
+            <div class="info-item">
+                <center>
+                    <h2>To-Do</h2>
+                    <h2>Notify the Task</h2>
+                    <div class="colors">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span class="active"></span>
+                    </div>
+                    <p>Add a reminder to notify the task of the website's to your to-do list.</p>
+                    <a href="welcome.html" class="btn">Learn More</a>
+                </center>
+            </div>
+        </div>
+        
+        <div class="navigation">
+            <span class="prev-btn">
+                <i class="bx bx-chevron-left"></i>
+            </span>
+            <span class="next-btn">
+                <i class="bx bx-chevron-right"></i>
+            </span>
+        </div>
+    </div>
+    
+    <div class="social-media">
+    <a href="https://instagram.com" target="_blank" class="social-icon">
+        <i class="bx bxl-instagram"></i>
+        <span>Instagram</span>
+    </a>
+    <a href="https://twitter.com" target="_blank" class="social-icon">
+        <i class="bx bxl-twitter"></i>
+        <span>Twitter</span>
+    </a>
+    <a href="https://facebook.com" target="_blank" class="social-icon">
+        <i class="bx bxl-facebook"></i>
+        <span>Facebook</span>
+    </a>
+</div>
+    <script>
+        // script.js
+
+
+// Select necessary elements
+const imgItems = document.querySelectorAll('.img-item');
+const infoItems = document.querySelectorAll('.info-item');
+const nextBtn = document.querySelector('.next-btn');
+const prevBtn = document.querySelector('.prev-btn');
+
+// Array of background colors corresponding to each slide
+const colors = ['lightcoral', 'skyblue', 'burlywood', 'lightgreen', 'gainsboro'];
+
+// Current index of the active slide
+let currentIndex = 0;
+
+// Function to update the carousel to the current index
+function updateCarousel() {
+    // Remove 'active' class from all img-items and info-items
+    imgItems.forEach(item => item.classList.remove('active'));
+    infoItems.forEach(item => item.classList.remove('active'));
+    
+    // Add 'active' class to the current img-item and info-item
+    imgItems[currentIndex].classList.add('active');
+    infoItems[currentIndex].classList.add('active');
+    
+    // Update the body's background color
+    document.body.style.background = colors[currentIndex];
+
+    //Update the left sidebar
+    document.querySelector('.left-sidebar').style.background = colors[currentIndex];
+}
+
+// Event listener for the 'Next' button
+nextBtn.addEventListener('click', () => {
+    currentIndex = (currentIndex + 1) % imgItems.length;
+    updateCarousel();
+    resetAutoSlide();
+});
+
+// Event listener for the 'Previous' button
+prevBtn.addEventListener('click', () => {
+    currentIndex = (currentIndex - 1 + imgItems.length) % imgItems.length;
+    updateCarousel();
+    resetAutoSlide();
+});
+
+// Initialize the carousel on page load
+window.addEventListener('DOMContentLoaded', () => {
+    updateCarousel();
+    startAutoSlide();
+});
+
+    // Auto-slide functionality
+    let autoSlideInterval;
+
+    function startAutoSlide(){
+        autoSlideInterval = setInterval(() => {
+            currentIndex = (currentIndex + 1) % imgItems.length;
+            updateCarousel();
+        },3000);
+    }
+
+    function resetAutoSlide(){
+        clearInterval(autoSlideInterval);
+        startAutoSlide();
+    }
+    </script>
+</body>
+</html>
